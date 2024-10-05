@@ -18,7 +18,7 @@ class showResource extends JsonResource
             'title' => $this->title ,
             'cover' => $this->cover ,
             'about' => $this->about ,
-            'podcasts' => showResource::collection($this->podcasts)
+            'podcasts' => podcastResource::collection($this->podcasts)
         ];
     }
 }
