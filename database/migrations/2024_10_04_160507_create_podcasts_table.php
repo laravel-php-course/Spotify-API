@@ -13,6 +13,13 @@ return new class extends Migration
     {
         Schema::create('podcasts', function (Blueprint $table) {
             $table->id();
+            $table->string('title' , 256);
+            $table->foreignId('show_id')->nullable()->constrained();
+            $table->foreignId('artist_id')->constrained();
+            $table->string('cover' , 256);
+            $table->string('file' , 256);
+            $table->text('lyric')->nullable();
+            $table->text('About')->nullable();
             $table->timestamps();
         });
     }
