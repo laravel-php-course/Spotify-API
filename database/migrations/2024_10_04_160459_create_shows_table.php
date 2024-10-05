@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('shows', function (Blueprint $table) {
             $table->id();
+            $table->string('title' , 256);
+            $table->text('cover');
+            $table->text('about');
             $table->timestamps();
         });
     }

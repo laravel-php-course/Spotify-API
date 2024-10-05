@@ -8,4 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Show extends Model
 {
     use HasFactory;
+    protected $guarded = [];
+
+    public function podcasts()
+    {
+        return $this->hasMany(Podcast::class);
+    }
 }
