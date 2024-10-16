@@ -20,7 +20,13 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
-        'password',
+        'mobile',
+        'username',
+        'two_step_verificaztion',
+        'profile',
+        'subscribtion_plan',
+        'subscribtion_expired_at',
+        'role',
     ];
 
     /**
@@ -42,4 +48,16 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
-}
+
+
+
+
+
+        const TEXT_MAX_LENGTH = 255;
+        const MOBILE_MAX_LENGTH = 11;
+        const USERNAME_MAX_LENGTH = 64;
+        const PASSWORD_MIN_LENGTH = 8;
+
+
+    }
+
