@@ -31,4 +31,20 @@ class UsersController extends Controller
             return $this->error('User registration failed.', 500, [$exception->getMessage()]);
         }
     }
+    public function logout(Request $request)
+    {
+        try {
+            // Check if the user is authenticated
+            if (!$request->user()) {
+                return $this->error('User not authenticated.', 401);
+            }
+
+            // Delete the current access token
+            $request->user()->currentAccessToken()->delete();
+
+            return $this->success('Logout successful',[]);
+        } catch (\Exception $exception) {
+            return $this->error('Logout failed: ' . $exception->getMessage(), 500);
+        }
+    }
 }
