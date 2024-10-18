@@ -4,6 +4,7 @@ use App\Http\Controllers\UsersController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth;
+use App\Models\User;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -18,5 +19,7 @@ use App\Http\Controllers\Auth;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+use App\Http\Controllers\Api\Auth\RegisterController;
 
+Route::post('/user_register', [UsersController::class, 'register']);
 Route::apiResource('/user',UsersController::class);
