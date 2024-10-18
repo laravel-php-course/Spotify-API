@@ -12,9 +12,8 @@ class UsersController extends Controller
 {
     use ApiResponse;
 
-    private UserRepository $repository;
 
-    public function __construct(UserRepository $userRepository)
+    public function __construct(private UserRepository $userRepository)
     {
         $this->repository = $userRepository;
     }
@@ -22,12 +21,14 @@ class UsersController extends Controller
     public function register(RegisterUserRequest $request)
     {
         try {
-            // Pass validated data to the repository
-            $user = $this->repository->create($request->validated());
+            $user = $this->userRepository->create($request->all());
 
-            return $this->success('User registered successfully.', ['user' => $user]);
+            return $this->success('Welcome to our app. You are registered', [
+                'token' => $user->createToken('user todo token', [], now()->addWeek())->plainTextToken,
+                'user'  => $user
+            ]);
         } catch (\Exception $exception) {
-            return $this->error('User registration failed.', 500, [$exception->getMessage()]);
+            return $this->error($exception->getMessage(), 500);
         }
     }
 
