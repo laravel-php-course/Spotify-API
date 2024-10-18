@@ -1,10 +1,9 @@
 <?php
 
-use App\Http\Controllers\UsersController;
+use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Auth;
-use App\Models\User;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -19,7 +18,7 @@ use App\Models\User;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-use App\Http\Controllers\Api\Auth\RegisterController;
 
-Route::post('/user_register', [UsersController::class, 'register']);
-Route::apiResource('/user',UsersController::class);
+Route::post('/user_register', [AuthController::class, 'register']);
+Route::get('/email/verify/{id}', [AuthController::class, 'verify'])->name('verification.verify')->middleware('throttle:10,1');
+// Route::apiResource('/user',UsersController::class);

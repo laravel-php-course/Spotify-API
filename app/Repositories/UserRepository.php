@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Enums\RoleEnum;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
@@ -19,9 +20,7 @@ class UserRepository
             'mobile' => $data['mobile'],
             'username' => $data['username'],
             'password' => Hash::make($data['password']),
-            'two_step_verification' => false,
-            'subscription_plan' => 'FREE',
-            'role' => 'USER',
+            'role' => RoleEnum::USER->value
         ]);
 
         return $user;
