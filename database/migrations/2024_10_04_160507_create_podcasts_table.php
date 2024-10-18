@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('cover' , 256);
             $table->string('file' , 256);
             $table->text('lyric')->nullable();
-            $table->text('About')->nullable();
+            $table->text('about')->nullable();
             $table->timestamps();
         });
     }
