@@ -20,5 +20,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::post('/user_register', [AuthController::class, 'register']);
+Route::post('/user_login', [AuthController::class, 'login']);
+Route::post('/user_logOut', [AuthController::class, 'logout']);
 Route::get('/email/verify/{id}', [AuthController::class, 'verify'])->name('verification.verify')->middleware('throttle:10,1');
 // Route::apiResource('/user',UsersController::class);
