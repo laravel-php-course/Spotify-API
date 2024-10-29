@@ -12,11 +12,25 @@ class AbilityService
             RoleEnum::USER->value => [
                 AbilityiesEnum::SHOW_MUSICS->value,
                 AbilityiesEnum::ACCESS_TOKEN->value,
-                //TODO
+                AbilityiesEnum::CREATE_PLAYLIST->value,
+                AbilityiesEnum::ADD_MUSIC_TO_PLAYLIST->value,
+                AbilityiesEnum::FOLLOW->value,
+                AbilityiesEnum::LIKE->value,
+                //TODO:DONE
             ],
-            RoleEnum::SINGER->value => [
-                //TODO
+            RoleEnum::ARTIST->value => [
+                AbilityiesEnum::SHOW_MUSICS->value,
+                AbilityiesEnum::ACCESS_TOKEN->value,
+                AbilityiesEnum::CREATE_PLAYLIST->value,
+                AbilityiesEnum::ADD_MUSIC_TO_PLAYLIST->value,
+                AbilityiesEnum::FOLLOW->value,
+                AbilityiesEnum::LIKE->value,
+                AbilityiesEnum::CREATE_ALBUM->value,
+                AbilityiesEnum::CREATE_SHOW->value,
+                AbilityiesEnum::CREATE_PODCAST->value,
+                AbilityiesEnum::CREATE_MUSIC->value,
             ],
+            RoleEnum::ADMIN->value => ['*'],
             default => AbilityiesEnum::ACCESS_TOKEN->value //TODO implemnt throw ecxeption
         };
     }
