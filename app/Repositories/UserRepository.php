@@ -13,6 +13,16 @@ class UserRepository
         return User::all();
     }
 
+    public function LoginUser(array $data)
+    {
+        $user = User::where('email',$data['email'])->first();
+        if (!Hash::check($data['password'] , $user->password)){
+            return False;
+        }else{
+            return  $user ;
+        }
+    }
+
     public function create(array $data): User
     {
         $user = User::create([

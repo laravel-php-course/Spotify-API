@@ -2,11 +2,12 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
-use App\Models\User;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Validation\Rules\Password;
 
-class RegisterUserRequest extends FormRequest
+class loginRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,10 +25,16 @@ class RegisterUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => 'required|string|email|max:' . User::EMAIL_MAX_LENGTH . '|unique:users',
-            'mobile' => 'nullable|string|size:' . User::MOBILE_MAX_LENGTH . '|unique:users',
-            'username' => 'required|string|max:' . User::USERNAME_MAX_LENGTH . '|unique:users',
-            'password' => ['required','string','min:' . User::PASSWORD_MIN_LENGTH, Password::min(8)->mixedCase()->numbers()->symbols()->uncompromised()],
+            'email'    => 'required|email|exists:users,email',
+            'password' => ['required', Password::min(8)->mixedCase()->numbers()->symbols()->uncompromised()],
         ];
+    }
+
+    public function failedValidation(Validator $Validator)
+    {
+        throw new HttpResponseException(response()->json([
+            'data' => $Validator->errors()
+        ])) ;
+
     }
 }

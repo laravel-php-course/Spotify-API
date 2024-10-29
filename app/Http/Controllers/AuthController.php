@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Enums\AbilityiesEnum;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\loginRequest;
 use App\Http\Requests\RegisterUserRequest;
 use App\Jobs\SendEmailJob;
 use App\Models\User;
 use App\Services\AbilityService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Repositories\UserRepository;
 use App\Trait\ApiResponse;
@@ -43,6 +45,20 @@ class AuthController extends Controller
             ]);
         } catch (\Exception $exception) {
             return $this->error($exception->getMessage(), 500);
+        }
+    }
+
+    public function login(loginRequest $request)
+    {
+        $user = $this->userRepository->LoginUser($request->all());
+
+        if ($user !== false) {
+            return $this->success('welcome to our apps. you are login', [
+                'access_token' => $user->createToken('access token for user', AbilityService::getAbiliteis($user->role), now()->addDays(config('auth.token.access_expire')))->plainTextToken,
+                'refresh_token' => $user->createToken('refresh token for user', [AbilityiesEnum::REFRESH_TOKEN->value], now()->addDays(config('auth.token.access_expire')))->plainTextToken,
+                'user'  => $user
+            ]); }else{
+            return $this->error('رمز عبور غلط است' , 401);
         }
     }
 
