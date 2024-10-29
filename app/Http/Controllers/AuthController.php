@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\AbilityiesEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RegisterUserRequest;
+use App\Jobs\SendEmailJob;
 use App\Models\User;
 use App\Services\AbilityService;
 use Illuminate\Http\Request;
@@ -21,19 +22,19 @@ class AuthController extends Controller
     }
 
     public function register(RegisterUserRequest $request)
+
     {
         try {
             $start_user = microtime(true);
             $user = $this->userRepository->create($request->all()); //TODO BABACK use only() instead of all()
             $end_user_time = microtime(true) - $start_user;
-
             $start_email = microtime(true);
-            $user->sendEmailVerificationNotification(); //TODO implement with job queue async
+            dispatch(new SendEmailJob($user)) ; //TODO:DONE implement with job queue async
             $end_email_time = microtime(true) - $start_email;
 
             return $this->success('Welcome to our app. You are registered please check your email for verifications.', [
                 'access_token' => $user->createToken('access token for user', AbilityService::getAbiliteis($user->role), now()->addDays(config('auth.token.access_expire')))->plainTextToken,
-                'refresh_token' => $user->createToken('refresh token for user', [AbilityiesEnum::RESFRESH_TOKEN->value], now()->addDays(config('auth.token.access_expire')))->plainTextToken,
+                'refresh_token' => $user->createToken('refresh token for user', [AbilityiesEnum::REFRESH_TOKEN->value], now()->addDays(config('auth.token.access_expire')))->plainTextToken,
                 'user'  => $user,
                 'time' => [
                     'email'=>$end_email_time,
