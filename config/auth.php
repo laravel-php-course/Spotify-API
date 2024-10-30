@@ -111,5 +111,8 @@ return [
     */
 
     'password_timeout' => 10800,
-
+    'token' => [
+        'access_expire' => (int) env('ACCESS_TOKEN_EXPIRE', 1),
+        'resfresh_expire' => intval(env('REFRESH_TOKEN_EXPIRE', 7))
+    ]
 ];

@@ -23,10 +23,10 @@ class RegisterUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => 'required|string|email|max:' . User::TEXT_MAX_LENGTH . '|unique:users',
+            'email' => 'required|string|email|max:' . User::EMAIL_MAX_LENGTH . '|unique:users',
             'mobile' => 'nullable|string|size:' . User::MOBILE_MAX_LENGTH . '|unique:users',
             'username' => 'required|string|max:' . User::USERNAME_MAX_LENGTH . '|unique:users',
-            'password' => 'required|string|min:' . User::PASSWORD_MIN_LENGTH . '|confirmed',
+            'password' => 'required|string|min:' . User::PASSWORD_MIN_LENGTH ,
         ];
     }
 }
