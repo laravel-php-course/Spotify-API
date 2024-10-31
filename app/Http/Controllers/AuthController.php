@@ -28,7 +28,7 @@ class AuthController extends Controller
     {
         try {
             $start_user = microtime(true);
-            $user = $this->userRepository->create($request->all()); //TODO BABACK use only() instead of all()
+            $user = $this->userRepository->create($request->only(['email','password','mobile','username'])); //TODO BABACK use only() instead of all() = done
             $end_user_time = microtime(true) - $start_user;
             $start_email = microtime(true);
             dispatch(new SendEmailJob($user)) ; //TODO:DONE implement with job queue async
