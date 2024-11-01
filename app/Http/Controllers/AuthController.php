@@ -28,7 +28,7 @@ class AuthController extends Controller
     {
         try {
             $start_user = microtime(true);
-            $user = $this->userRepository->create($request->all()); //TODO BABACK use only() instead of all()
+            $user = $this->userRepository->create($request->only(['email','password','mobile','username'])); //TODO BABACK use only() instead of all() = done
             $end_user_time = microtime(true) - $start_user;
             $start_email = microtime(true);
             dispatch(new SendEmailJob($user)) ; //TODO:DONE implement with job queue async
@@ -76,6 +76,28 @@ class AuthController extends Controller
             return $this->error('Logout failed: ' . $exception->getMessage(), 500);
         }
     }
+
+
+    public function refresh(Request $request)
+    {
+        try {
+            if (!$request->user()) {
+                return $this->error('User not authenticated.', 401);
+            }
+
+            $newAccessToken = $request->user()->createToken('access token for user', AbilityService::getAbiliteis($request->user()->role), now()->addDays(config('auth.token.access_expire')))->plainTextToken;
+            $newRefreshToken = $request->user()->createToken('refresh token for user', [AbilityiesEnum::REFRESH_TOKEN->value], now()->addDays(config('auth.token.refresh_expire')))->plainTextToken;
+
+            return $this->success('Tokens refreshed successfully.', [
+                'access_token' => $newAccessToken,
+                'refresh_token' => $newRefreshToken,
+            ]);
+        } catch (\Exception $exception) {
+            return $this->error('Failed to refresh tokens: ' . $exception->getMessage(), 500);
+        }
+    }
+
+
 
     public function verify($id, Request $request)
     {
