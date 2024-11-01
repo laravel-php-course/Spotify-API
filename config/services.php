@@ -30,5 +30,11 @@ return [
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
-
+    'sms' => [
+        'api' => env('SMS_SERVICE_API'),
+        'username' => env('SMS_SERVICE_USERNAME'),
+        'password' => env('SMS_SERVICE_PASSWORD'),
+        'source' => env('SMS_SERVICE_SOURCE_NUMBER') ,
+        'template' => env('SMS_SERVICE_OTP_TEMPLATE_MESSAGE') ,
+    ] ,
 ];
