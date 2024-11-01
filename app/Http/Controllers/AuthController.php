@@ -77,6 +77,28 @@ class AuthController extends Controller
         }
     }
 
+
+    public function refresh(Request $request)
+    {
+        try {
+            if (!$request->user()) {
+                return $this->error('User not authenticated.', 401);
+            }
+
+            $newAccessToken = $request->user()->createToken('access token for user', AbilityService::getAbiliteis($request->user()->role), now()->addDays(config('auth.token.access_expire')))->plainTextToken;
+            $newRefreshToken = $request->user()->createToken('refresh token for user', [AbilityiesEnum::REFRESH_TOKEN->value], now()->addDays(config('auth.token.refresh_expire')))->plainTextToken;
+
+            return $this->success('Tokens refreshed successfully.', [
+                'access_token' => $newAccessToken,
+                'refresh_token' => $newRefreshToken,
+            ]);
+        } catch (\Exception $exception) {
+            return $this->error('Failed to refresh tokens: ' . $exception->getMessage(), 500);
+        }
+    }
+
+
+
     public function verify($id, Request $request)
     {
         if (!$request->hasValidSignature())
