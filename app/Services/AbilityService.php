@@ -16,7 +16,6 @@ class AbilityService
                 AbilityiesEnum::ADD_MUSIC_TO_PLAYLIST->value,
                 AbilityiesEnum::FOLLOW->value,
                 AbilityiesEnum::LIKE->value,
-                //TODO:DONE
             ],
             RoleEnum::ARTIST->value => [
                 AbilityiesEnum::SHOW_MUSICS->value,
@@ -31,7 +30,7 @@ class AbilityService
                 AbilityiesEnum::CREATE_MUSIC->value,
             ],
             RoleEnum::ADMIN->value => ['*'],
-            default => AbilityiesEnum::ACCESS_TOKEN->value //TODO implemnt throw ecxeption
+            default => AbilityiesEnum::ACCESS_TOKEN->value 
         };
     }
 }

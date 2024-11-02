@@ -16,7 +16,6 @@ use App\Trait\ApiResponse;
 class AuthController extends Controller
 {
     //TODO DRY For Token Response
-    //TODO Baback Localization All messages
     use ApiResponse;
     public function __construct(private UserRepository $userRepository)
     {

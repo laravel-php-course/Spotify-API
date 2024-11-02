@@ -15,9 +15,8 @@ use Illuminate\Http\JsonResponse;
 
 class Handler extends ExceptionHandler
 {
-    use ApiResponse; //TODO
+    use ApiResponse;
     //TODO Log Exception with best practice formate;
-    //TODO Koroush Localization All messages
 
     /**
      * The list of the inputs that are never flashed to the session on validation exceptions.
