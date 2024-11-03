@@ -14,6 +14,8 @@ return new class extends Migration
     {
         Schema::create('playlists', function (Blueprint $table) {
             $table->id();
+            $table->dropForeign('music_id')->constrained();
+            $table->dropForeign('playlists_id')->constrained();
             $table->timestamps();
         });
     }
