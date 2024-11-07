@@ -14,8 +14,10 @@ return new class extends Migration
     {
         Schema::create('playlists', function (Blueprint $table) {
             $table->id();
-            $table->dropForeign('music_id')->constrained();
-            $table->dropForeign('playlists_id')->constrained();
+            $table->string('name');
+            $table->foreignId('user_id')->constrained();
+            $table->boolean('is_public')->default('false');
+
             $table->timestamps();
         });
     }
