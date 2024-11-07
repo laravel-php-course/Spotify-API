@@ -71,79 +71,41 @@ class Handler extends ExceptionHandler
     // ModelNotFoundException (404)
     protected function handleModelNotFoundException(ModelNotFoundException $e): JsonResponse
     {
-        return response()->json([
-            'success' => false,
-            'message' => __('http_error_messages.form_model_not_Found'),
-            'errors'  => [],
-            'data'    => [],
-            'code'    => 404,
-        ], 404);
+        return $this->error(__('http_error_messages.form_model_not_Found'), 404 );
     }
 
     // ValidationException (422)
     protected function handleValidationException(ValidationException $e): JsonResponse
     {
-        return response()->json([
-            'success' => false,
-            'message' => __('http_error_messages.form_validation_error'),
-            'errors'  => $e->errors(), // Return validation errors
-            'data'    => [],
-            'code'    => 422,
-        ], 422);
+        return $this->error(__('http_error_messages.form_validation_error'), 422 , $e->errors());
     }
 
     // AuthorizationException (403)
     protected function handleAuthorizationException(AuthorizationException $e): JsonResponse
     {
-        return response()->json([
-            'success' => false,
-            'message' => __('http_error_messages.form_authorization'),
-            'errors'  => [],
-            'data'    => [],
-            'code'    => 403,
-        ], 403);
+        return $this->error(__('http_error_messages.form_authorization'), 403);
     }
 
     // AuthenticationException (401)
     protected function handleAuthenticationException(AuthenticationException $e): JsonResponse
     {
-        return response()->json([
-            'success' => false,
-            'message' => __('http_error_messages.form_authentication'),
-            'errors'  => [],
-            'data'    => [],
-            'code'    => 401,
-        ], 401);
+        return $this->error(__('http_error_messages.form_authentication'), 401);
     }
 
     // HttpException (e.g., 404, 500)
     protected function handleHttpException(HttpException $e): JsonResponse
     {
-        return response()->json([
-            'success' => false,
-            'message' => $e->getMessage() ?: __('http_error_messages.form_http'),
-            'errors'  => [],
-            'data'    => [],
-            'code'    => $e->getStatusCode(),
-        ], $e->getStatusCode());
+        return $this->error($e->getMessage() ?:__('http_error_messages.form_http'), $e->getStatusCode()  );
     }
 
     // General exception (500)
     protected function handleGeneralException(Throwable $e): JsonResponse
     {
-        return response()->json([
-            'success' => false,
-            'message' => __('http_error_messages.form_General'),
-            'errors'  => [],
-            'data'    => [],
-            'code'    => 500,
-        ], 500);
+        return $this->error(__('http_error_messages.form_General'), 500 );
     }
 
     private function handleInvalidRoleExceptionException(Throwable $e): JsonResponse
     {
-        return response()->json([
-            'error' => $e->getMessage(),
-        ], 400);
+        return $this->error($e->getMessage() ?:__('http_error_messages.InvalidRole'), 400 );
     }
 }
