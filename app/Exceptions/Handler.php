@@ -49,6 +49,10 @@ class Handler extends ExceptionHandler
             return $this->handleValidationException($throwable);
         }
 
+        if ($throwable instanceof InvalidRoleException) {
+            return $this->handleInvalidRoleExceptionException($throwable);
+        }
+
         if ($throwable instanceof AuthorizationException) {
             return $this->handleAuthorizationException($throwable);
         }
@@ -134,5 +138,12 @@ class Handler extends ExceptionHandler
             'data'    => [],
             'code'    => 500,
         ], 500);
+    }
+
+    private function handleInvalidRoleExceptionException(Throwable $e): JsonResponse
+    {
+        return response()->json([
+            'error' => $e->getMessage(),
+        ], 400);
     }
 }

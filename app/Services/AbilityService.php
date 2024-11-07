@@ -3,9 +3,13 @@
 namespace App\Services;
 use App\Enums\AbilityiesEnum;
 use App\Enums\RoleEnum;
+use App\Exceptions\InvalidRoleException;
 
 class AbilityService
 {
+    /**
+     * @throws InvalidRoleException
+     */
     public static function getAbiliteis(string $role = 'user')
     {
         return match ($role) {
@@ -30,7 +34,8 @@ class AbilityService
                 AbilityiesEnum::CREATE_MUSIC->value,
             ],
             RoleEnum::ADMIN->value => ['*'],
-            default => AbilityiesEnum::ACCESS_TOKEN->value 
+            default => throw new InvalidRoleException("The role '{$role}' is not recognized."),
+
         };
     }
 }
