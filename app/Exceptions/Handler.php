@@ -2,7 +2,7 @@
 
 namespace App\Exceptions;
 
-use App\trait\ApiResponse;
+use App\Trait\ApiResponse;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Validation\ValidationException;
@@ -12,6 +12,8 @@ use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Throwable;
 use Illuminate\Http\JsonResponse;
+
+
 
 class Handler extends ExceptionHandler
 {
