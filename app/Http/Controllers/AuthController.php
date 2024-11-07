@@ -33,7 +33,7 @@ class AuthController extends Controller
             dispatch(new SendEmailJob($user));
             $end_email_time = microtime(true) - $start_email;
 
-            return $this->success('Welcome to our app. You are registered please check your email for verifications.', [
+            return $this->success(__("http_success_messages.form_register_success"), [
                 'access_token' => $user->createToken('access token for user', AbilityService::getAbiliteis($user->role), now()->addDays(config('auth.token.access_expire')))->plainTextToken,
                 'refresh_token' => $user->createToken('refresh token for user', [AbilityiesEnum::REFRESH_TOKEN->value], now()->addDays(config('auth.token.access_expire')))->plainTextToken,
                 'user'  => $user,
@@ -43,7 +43,7 @@ class AuthController extends Controller
                 ]
             ]);
         } catch (\Exception $exception) {
-            return $this->error($exception->getMessage(), 500);
+            return $this->error($exception->getMessage() ?:__('http_error_messages.server_problem'), 500);
         }
     }
 
@@ -52,7 +52,7 @@ class AuthController extends Controller
         $user = $this->userRepository->LoginUser($request->all());
 
         if ($user !== false) {
-            return $this->success('welcome to our apps. you are login', [
+            return $this->success(ــ('http_success_messages.form_login_success'), [
                 'access_token'  => $user->createToken('access token for user', AbilityService::getAbiliteis($user->role), now()->addDays(config('auth.token.access_expire')))->plainTextToken,
                 'refresh_token' => $user->createToken('refresh token for user', [AbilityiesEnum::REFRESH_TOKEN->value], now()->addDays(config('auth.token.access_expire')))->plainTextToken,
                 'user'          => $user
@@ -67,9 +67,9 @@ class AuthController extends Controller
         try {
             $request->user()->currentAccessToken()->delete();
 
-            return $this->success('Logout successful', []);
+            return $this->success(ــ('http_success_messages.logout_success'), []);
         } catch (\Exception $exception) {
-            return $this->error('Logout failed: ' . $exception->getMessage(), 500);
+            return $this->error($exception->getMessage() ?:__("http_error_messages.invalid_password"), 401);
         }
     }
 
@@ -81,12 +81,12 @@ class AuthController extends Controller
             $newAccessToken = $user->createToken('access token for user', AbilityService::getAbiliteis($user->role), now()->addDays(config('auth.token.access_expire')))->plainTextToken;
             $newRefreshToken = $user->createToken('refresh token for user', [AbilityiesEnum::REFRESH_TOKEN->value], now()->addDays(config('auth.token.refresh_expire')))->plainTextToken;
 
-            return $this->success('Tokens refreshed successfully.', [
+            return $this->success(__('http_success_messages.refresh_token_success'), [
                 'access_token' => $newAccessToken,
                 'refresh_token' => $newRefreshToken,
             ]);
         } catch (\Exception $exception) {
-            return $this->error('Failed to refresh tokens: ' . $exception->getMessage(), 500);
+            return $this->error($exception->getMessage() ?:__('http_error_messages.refresh_token_error'), 500);
         }
     }
 
@@ -96,7 +96,7 @@ class AuthController extends Controller
     {
         if (!$request->hasValidSignature())
         {
-            return $this->error('Invalid/Expired url verification.', 400);
+            return $this->error(__('http_error_messages.url_error'), 400);
         }
 
         $user = User::findOrFail($id);
@@ -106,6 +106,6 @@ class AuthController extends Controller
             $user->markEmailAsVerified();
         }
 
-        return $this->success('your email is verified.');
+        return $this->success('http_success_messages.email_verify_success');
     }
 }
