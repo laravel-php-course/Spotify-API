@@ -69,7 +69,7 @@ class Handler extends ExceptionHandler
     {
         return response()->json([
             'success' => false,
-            'message' => 'Resource not found.',
+            'message' => __('http_error_messages.form_model_not_Found'),
             'errors'  => [],
             'data'    => [],
             'code'    => 404,
@@ -93,7 +93,7 @@ class Handler extends ExceptionHandler
     {
         return response()->json([
             'success' => false,
-            'message' => 'You are not authorized to perform this action.',
+            'message' => __('http_error_messages.form_authorization'),
             'errors'  => [],
             'data'    => [],
             'code'    => 403,
@@ -105,7 +105,7 @@ class Handler extends ExceptionHandler
     {
         return response()->json([
             'success' => false,
-            'message' => 'Authentication failed.',
+            'message' => __('http_error_messages.form_authentication'),
             'errors'  => [],
             'data'    => [],
             'code'    => 401,
@@ -117,7 +117,7 @@ class Handler extends ExceptionHandler
     {
         return response()->json([
             'success' => false,
-            'message' => $e->getMessage() ?: 'HTTP error occurred.',
+            'message' => $e->getMessage() ?: __('http_error_messages.form_http'),
             'errors'  => [],
             'data'    => [],
             'code'    => $e->getStatusCode(),
@@ -129,7 +129,7 @@ class Handler extends ExceptionHandler
     {
         return response()->json([
             'success' => false,
-            'message' => 'An error occurred. Please try again later.',
+            'message' => __('http_error_messages.form_General'),
             'errors'  => [],
             'data'    => [],
             'code'    => 500,
