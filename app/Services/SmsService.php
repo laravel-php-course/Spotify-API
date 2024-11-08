@@ -40,14 +40,14 @@ class SmsService
             ]);
 
             if ($response->successful()) {
-                return true; // نشان‌دهنده موفقیت
+                return true;
             } else {
                 Log::error('ارسال SMS ناموفق', ['response' => $response->body()]);
-                return false; // نشان‌دهنده شکست
+                return false;
             }
         } catch (\Exception $e) {
             Log::error('استثنای ارسال SMS', ['message' => $e->getMessage()]);
-            return false; // نشان‌دهنده شکست
+            return false;
         }
     }
 }
