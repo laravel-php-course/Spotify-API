@@ -32,7 +32,8 @@ class SmsService
         $message = str_replace('{CODE}', $code, $template);
 
         try {
-            $response = Http::withoutVerifying()->post(config('services.sms.api'), [
+        $response = Http::withoutVerifying()->withHeaders(['Content-Type' => 'application/x-www-form-urlencoded'])
+        ->post(config('services.sms.api'), [
                 'username' => config('services.sms.username'),
                 'password' => config('services.sms.password'),
                 'message' => $message,
