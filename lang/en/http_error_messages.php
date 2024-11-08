@@ -10,5 +10,6 @@ return [
     'server_problem'        => "An error occurred on the server.",
     'invalid_password'      => "Invalid password.",
     'refresh_token_error'   => "Failed to refresh token.",
-    'url_error'             => 'URL verification has expired.'
+    'url_error'             => 'URL verification has expired.',
+    'bad_request'           => "Invalid request"
 ];

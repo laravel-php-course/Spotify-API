@@ -10,5 +10,6 @@ return [
     'server_problem'        => "خطایی در سرور رخ داده",
     "invalid_password"      =>"رمز عبور نامعتبر است",
     'refresh_token_error'   =>"به روزرسانی توکن با خطا مواجه شد",
-    "url_error"             =>'تایید url منقضی شده است'
+    "url_error"             =>'تایید url منقضی شده است',
+    'bad_request'           => "درخواست نامعتبر است."
 ];
