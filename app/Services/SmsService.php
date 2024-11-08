@@ -33,7 +33,7 @@ class SmsService
 
         try {
         $response = Http::withoutVerifying()->withHeaders(['Content-Type' => 'application/x-www-form-urlencoded'])
-        ->post(config('services.sms.api'), [
+         ->post(config('services.sms.api'), [
                 'username' => config('services.sms.username'),
                 'password' => config('services.sms.password'),
                 'message' => $message,
