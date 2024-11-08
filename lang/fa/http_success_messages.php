@@ -5,5 +5,5 @@ return[
     'form_login_success'   =>"ورود با موفقیت انجام شد",
     "logout_success"       =>"خروج با موفقیت انجام شد",
     'refresh_token_success'=>'توکن با موفقیت به روزرسانی شد',
-    "email_verify_success" =>"ایمیل تایید شد"
+    "otp_sent" => "کد تایید به شماره تلفن شما ارسال شد."
 ];

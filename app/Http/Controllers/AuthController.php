@@ -49,17 +49,19 @@ class AuthController extends Controller
 
     public function login(LoginRequest $request)
     {
-        $user = $this->userRepository->LoginUser($request->all());
+        $phoneNumber = $request->input('phone_number');
+        $user = $this->userRepository->getUserByPhone($phoneNumber);
 
-        if ($user !== false) {
-            return $this->success(ــ('http_success_messages.form_login_success'), [
-                'access_token'  => $user->createToken('access token for user', AbilityService::getAbiliteis($user->role), now()->addDays(config('auth.token.access_expire')))->plainTextToken,
-                'refresh_token' => $user->createToken('refresh token for user', [AbilityiesEnum::REFRESH_TOKEN->value], now()->addDays(config('auth.token.access_expire')))->plainTextToken,
-                'user'          => $user
-            ]);
+        if ($user) {
+            $otpCode = SmsService::generateOtpCode();
+            if (SmsService::sendOtp($phoneNumber, $otpCode)) {
+                Cache::put('otp_' . $phoneNumber, $otpCode, 300);
+                return response()->json(['message' => __('http_success_messages.otp_sent')]);
+            }
+            return response()->json(['message' => __('http_error_messages.sms_failed')], 500);
         }
 
-        return $this->error('رمز عبور غلط است' , 401);
+        return response()->json(['message' => __('http_error_messages.form_authentication')], 401);
     }
 
     public function logout(Request $request)

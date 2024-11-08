@@ -3,10 +3,11 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class SmsService
 {
-    public static function genrateOtpCode()
+    public static function generateOtpCode()
     {
         return random_int(1000, 9999);
     }
@@ -14,38 +15,39 @@ class SmsService
     public static function convertToIranFormat($mobileNumber)
     {
         $mobileNumber = preg_replace('/\D/', '', $mobileNumber);
-
         if (substr($mobileNumber, 0, 2) === '09') {
             return '98' . substr($mobileNumber, 1);
-        }
-        elseif (substr($mobileNumber, 0, 3) === '989') {
+        } elseif (substr($mobileNumber, 0, 3) === '989') {
             return $mobileNumber;
-        }
-        elseif (substr($mobileNumber, 0, 4) === '+989') {
+        } elseif (substr($mobileNumber, 0, 4) === '+989') {
             return substr($mobileNumber, 1);
-        }
-        else {
-            return false;
+        } else {
+            return false; // فرمت نامعتبر
         }
     }
 
     public static function sendOtp(string $phoneNumber, int $code)
     {
         $template = config('services.sms.template');
-        $search   = ['{CODE}'];
-        $replace  = [$code];
-        $msg      = str_replace($search , $replace , $template);
-        $response = Http::withoutVerifying()->withHeaders([
-                'Content-Type' => 'application/x-www-form-urlencoded',
-            ])->asForm()->post(config('services.sms.api'), [
-                'username'    => config('services.sms.username'),
-                'password'    => config('services.sms.password'),
-                'source'      => config('services.sms.source'),
-                'message'     => $msg,
-                'destination' => self::convertToIranFormat($phoneNumber)
-        ]);
-        $msgId = $response->body();
+        $message = str_replace('{CODE}', $code, $template);
 
-        return $response->body();
+        try {
+            $response = Http::withoutVerifying()->post(config('services.sms.api'), [
+                'username' => config('services.sms.username'),
+                'password' => config('services.sms.password'),
+                'message' => $message,
+                'destination' => self::convertToIranFormat($phoneNumber),
+            ]);
+
+            if ($response->successful()) {
+                return true; // نشان‌دهنده موفقیت
+            } else {
+                Log::error('ارسال SMS ناموفق', ['response' => $response->body()]);
+                return false; // نشان‌دهنده شکست
+            }
+        } catch (\Exception $e) {
+            Log::error('استثنای ارسال SMS', ['message' => $e->getMessage()]);
+            return false; // نشان‌دهنده شکست
+        }
     }
 }
