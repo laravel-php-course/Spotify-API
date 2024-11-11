@@ -15,7 +15,7 @@ use App\Trait\ApiResponse;
 
 class AuthController extends Controller
 {
-    //TODO DRY For Token Response
+    //TODO:DONE DRY For Token Response
     use ApiResponse;
     public function __construct(private UserRepository $userRepository)
     {
@@ -25,23 +25,10 @@ class AuthController extends Controller
 
     {
         try {
-            $start_user    = microtime(true);
             $user          = $this->userRepository->create($request->only(['email','password','mobile','username']));
-            $end_user_time = microtime(true) - $start_user;
-
-            $start_email   = microtime(true);
             dispatch(new SendEmailJob($user));
-            $end_email_time = microtime(true) - $start_email;
+            return $this->tokenResponse($user);
 
-            return $this->success('Welcome to our app. You are registered please check your email for verifications.', [
-                'access_token' => $user->createToken('access token for user', AbilityService::getAbiliteis($user->role), now()->addDays(config('auth.token.access_expire')))->plainTextToken,
-                'refresh_token' => $user->createToken('refresh token for user', [AbilityiesEnum::REFRESH_TOKEN->value], now()->addDays(config('auth.token.access_expire')))->plainTextToken,
-                'user'  => $user,
-                'time' => [
-                    'email'=>$end_email_time,
-                    'user' => $end_user_time
-                ]
-            ]);
         } catch (\Exception $exception) {
             return $this->error($exception->getMessage(), 500);
         }
@@ -52,11 +39,7 @@ class AuthController extends Controller
         $user = $this->userRepository->LoginUser($request->all());
 
         if ($user !== false) {
-            return $this->success('welcome to our apps. you are login', [
-                'access_token'  => $user->createToken('access token for user', AbilityService::getAbiliteis($user->role), now()->addDays(config('auth.token.access_expire')))->plainTextToken,
-                'refresh_token' => $user->createToken('refresh token for user', [AbilityiesEnum::REFRESH_TOKEN->value], now()->addDays(config('auth.token.access_expire')))->plainTextToken,
-                'user'          => $user
-            ]);
+            return $this->tokenResponse($user);
         }
 
         return $this->error('رمز عبور غلط است' , 401);

@@ -5,6 +5,7 @@ namespace App\Exceptions;
 use App\trait\ApiResponse;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Auth\Access\AuthorizationException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -16,7 +17,7 @@ use Illuminate\Http\JsonResponse;
 class Handler extends ExceptionHandler
 {
     use ApiResponse;
-    //TODO Log Exception with best practice formate;
+    //TODO:ِDONE Log Exception with best practice formate;
 
     /**
      * The list of the inputs that are never flashed to the session on validation exceptions.
@@ -41,6 +42,15 @@ class Handler extends ExceptionHandler
 
     public function render($request, Throwable $throwable): JsonResponse
     {
+
+        Log::error('خطا رخ داده است', [
+            'exception' => $throwable,
+            'message' => $throwable->getMessage(),
+            'file' => $throwable->getFile(),
+            'line' => $throwable->getLine(),
+            'trace' => $throwable->getTraceAsString(),
+        ]);
+
         if ($throwable instanceof ModelNotFoundException || $throwable instanceof NotFoundHttpException) {
             return $this->handleModelNotFoundException($throwable);
         }
