@@ -2,10 +2,9 @@
 
 namespace App\Exceptions;
 
-use App\trait\ApiResponse;
+use App\Trait\ApiResponse;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Auth\AuthenticationException;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Auth\Access\AuthorizationException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -17,13 +16,7 @@ use Illuminate\Http\JsonResponse;
 class Handler extends ExceptionHandler
 {
     use ApiResponse;
-    //TODO:ِDONE Log Exception with best practice formate;
 
-    /**
-     * The list of the inputs that are never flashed to the session on validation exceptions.
-     *
-     * @var array<int, string>
-     */
     protected $dontFlash = [
         'current_password',
         'password',
@@ -36,21 +29,17 @@ class Handler extends ExceptionHandler
     public function register(): void
     {
         $this->reportable(function (Throwable $e) {
-            //
+            \Log::error('Exception occurred: ', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+            ]);
         });
     }
 
     public function render($request, Throwable $throwable): JsonResponse
     {
-
-        Log::error('خطا رخ داده است', [
-            'exception' => $throwable,
-            'message' => $throwable->getMessage(),
-            'file' => $throwable->getFile(),
-            'line' => $throwable->getLine(),
-            'trace' => $throwable->getTraceAsString(),
-        ]);
-
         if ($throwable instanceof ModelNotFoundException || $throwable instanceof NotFoundHttpException) {
             return $this->handleModelNotFoundException($throwable);
         }
@@ -60,7 +49,7 @@ class Handler extends ExceptionHandler
         }
 
         if ($throwable instanceof InvalidRoleException) {
-            return $this->handleInvalidRoleExceptionException($throwable);
+            return $this->handleInvalidRoleException($throwable);
         }
 
         if ($throwable instanceof AuthorizationException) {
@@ -75,85 +64,62 @@ class Handler extends ExceptionHandler
             return $this->handleHttpException($throwable);
         }
 
+        if ($throwable instanceof CustomException) {
+            return $this->handleCustomException($throwable);
+        }
+
         return $this->handleGeneralException($throwable);
     }
 
     // ModelNotFoundException (404)
     protected function handleModelNotFoundException(ModelNotFoundException $e): JsonResponse
     {
-        return response()->json([
-            'success' => false,
-            'message' => __('http_error_messages.form_model_not_Found'),
-            'errors'  => [],
-            'data'    => [],
-            'code'    => 404,
-        ], 404);
+        return $this->error(__('http_error_messages.form_model_not_Found'), 404);
     }
 
     // ValidationException (422)
     protected function handleValidationException(ValidationException $e): JsonResponse
     {
-        return response()->json([
-            'success' => false,
+        return $this->error(__('http_error_messages.form_validation_error'), 422, [
+            'errors' => $e->errors(),
             'message' => __('http_error_messages.form_validation_error'),
-            'errors'  => $e->errors(), // Return validation errors
-            'data'    => [],
-            'code'    => 422,
-        ], 422);
+            'timestamp' => now()->toDateTimeString(),
+        ]);
+    }
+
+    // InvalidRoleException (400)
+    protected function handleInvalidRoleException(InvalidRoleException $e): JsonResponse
+    {
+        return $this->error($e->getMessage() ?: __('http_error_messages.InvalidRole'), 400);
+    }
+
+    // Custom Exception (400)
+    protected function handleCustomException(CustomException $e): JsonResponse
+    {
+        return $this->error($e->getMessage() ?: __('http_error_messages.bad_request'), 400);
     }
 
     // AuthorizationException (403)
     protected function handleAuthorizationException(AuthorizationException $e): JsonResponse
     {
-        return response()->json([
-            'success' => false,
-            'message' => __('http_error_messages.form_authorization'),
-            'errors'  => [],
-            'data'    => [],
-            'code'    => 403,
-        ], 403);
+        return $this->error(__('http_error_messages.form_authorization'), 403);
     }
 
     // AuthenticationException (401)
     protected function handleAuthenticationException(AuthenticationException $e): JsonResponse
     {
-        return response()->json([
-            'success' => false,
-            'message' => __('http_error_messages.form_authentication'),
-            'errors'  => [],
-            'data'    => [],
-            'code'    => 401,
-        ], 401);
+        return $this->error(__('http_error_messages.form_authentication'), 401);
     }
 
     // HttpException (e.g., 404, 500)
     protected function handleHttpException(HttpException $e): JsonResponse
     {
-        return response()->json([
-            'success' => false,
-            'message' => $e->getMessage() ?: __('http_error_messages.form_http'),
-            'errors'  => [],
-            'data'    => [],
-            'code'    => $e->getStatusCode(),
-        ], $e->getStatusCode());
+        return $this->error($e->getMessage() ?: __('http_error_messages.form_http'), $e->getStatusCode());
     }
 
     // General exception (500)
     protected function handleGeneralException(Throwable $e): JsonResponse
     {
-        return response()->json([
-            'success' => false,
-            'message' => __('http_error_messages.form_General'),
-            'errors'  => [],
-            'data'    => [],
-            'code'    => 500,
-        ], 500);
-    }
-
-    private function handleInvalidRoleExceptionException(Throwable $e): JsonResponse
-    {
-        return response()->json([
-            'error' => $e->getMessage(),
-        ], 400);
+        return $this->error(__('http_error_messages.form_General'), 500);
     }
 }

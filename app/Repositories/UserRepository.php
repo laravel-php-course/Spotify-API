@@ -12,7 +12,10 @@ class UserRepository
     {
         return User::all();
     }
-
+    public function getUserByPhone($phoneNumber)
+    {
+        return User::where('phone_number', $phoneNumber)->first();
+    }
     public function LoginUser(array $data)
     {
         $user = User::where('email',$data['email'])->first();
