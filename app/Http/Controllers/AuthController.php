@@ -46,22 +46,24 @@ class AuthController extends Controller
             return $this->error($exception->getMessage() ?:__('http_error_messages.server_problem'), 500);
         }
     }
-
-    public function login(LoginRequest $request)
+    public function login(loginRequest $request)
     {
-        $phoneNumber = $request->input('phone_number');
-        $user = $this->userRepository->getUserByPhone($phoneNumber);
+        $user = $this->userRepository->LoginUser($request->all());
 
-        if ($user) {
-            $otpCode = SmsService::generateOtpCode();
-            if (SmsService::sendOtp($phoneNumber, $otpCode)) {
-                Cache::put('otp_' . $phoneNumber, $otpCode, 300);
-                return response()->json(['message' => __('http_success_messages.otp_sent')]);
+        if ($user !== false) {
+            if (!$user->two_step_verificaztion) {
+                $user->two_step_verificaztion = true;
+                $user->save();
             }
-            return response()->json(['message' => __('http_error_messages.sms_failed')], 500);
-        }
 
-        return response()->json(['message' => __('http_error_messages.form_authentication')], 401);
+            return $this->success('welcome to our apps. you are login', [
+                'access_token' => $user->createToken('access token for user', AbilityService::getAbiliteis($user->role), now()->addDays(config('auth.token.access_expire')))->plainTextToken,
+                'refresh_token' => $user->createToken('refresh token for user', [AbilityiesEnum::REFRESH_TOKEN->value], now()->addDays(config('auth.token.access_expire')))->plainTextToken,
+                'user' => $user
+            ]);
+        } else {
+            return $this->error('رمز عبور غلط است', 401);
+        }
     }
 
     public function logout(Request $request)
