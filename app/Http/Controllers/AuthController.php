@@ -7,11 +7,15 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterUserRequest;
 use App\Jobs\SendEmailJob;
+use App\Jobs\SendSmsJob;
 use App\Models\User;
 use App\Services\AbilityService;
+use App\Services\SmsService;
+use App\Services\VerificationService;
 use Illuminate\Http\Request;
 use App\Repositories\UserRepository;
 use App\Trait\ApiResponse;
+use Session;
 
 class AuthController extends Controller
 {
@@ -49,16 +53,27 @@ class AuthController extends Controller
 
     public function login(LoginRequest $request)
     {
-        $phoneNumber = $request->input('phone_number');
-        $user = $this->userRepository->getUserByPhone($phoneNumber);
+        $user = $this->userRepository->LoginUser($request->all());
+        if ($user !== false) {
 
-        if ($user) {
-            $otpCode = SmsService::generateOtpCode();
-            if (SmsService::sendOtp($phoneNumber, $otpCode)) {
-                Cache::put('otp_' . $phoneNumber, $otpCode, 300);
-                return response()->json(['message' => __('http_success_messages.otp_sent')]);
-            }
-            return response()->json(['message' => __('http_error_messages.sms_failed')], 500);
+            dispatch(new SendSmsJob($user));
+            VerificationService::set('user' , $user);
+
+        }
+if ($user == false){
+        return response()->json(['message' => __('http_error_messages.form_authentication')], 401);}
+    }
+
+    public function codeVerify(Request $request)
+    {
+        $user = VerificationService::get('user');
+
+        if ($request->code == VerificationService::get($user->mobile)){
+            return $this->success(__('http_success_messages.form_login_success'), [
+                'access_token'  => $user->createToken('access token for user', AbilityService::getAbiliteis($user->role), now()->addDays(config('auth.token.access_expire')))->plainTextToken,
+                'refresh_token' => $user->createToken('refresh token for user', [AbilityiesEnum::REFRESH_TOKEN->value], now()->addDays(config('auth.token.access_expire')))->plainTextToken,
+                'user'          => $user
+            ]);
         }
 
         return response()->json(['message' => __('http_error_messages.form_authentication')], 401);
