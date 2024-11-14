@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterUserRequest;
 use App\Jobs\SendEmailJob;
+
 use App\Jobs\SendSmsJob;
 use App\Models\User;
 use App\Services\AbilityService;
@@ -50,12 +51,14 @@ class AuthController extends Controller
             return $this->error($exception->getMessage() ?:__('http_error_messages.server_problem'), 500);
         }
     }
-
-    public function login(LoginRequest $request)
+    public function login(loginRequest $request)
     {
         $user = $this->userRepository->LoginUser($request->all());
         if ($user !== false) {
-
+            if (!$user->two_step_verificaztion) {
+                $user->two_step_verificaztion = true;
+                $user->save();
+            }
             dispatch(new SendSmsJob($user));
             VerificationService::set('user' , $user);
 
