@@ -22,7 +22,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::post('/user_register', [AuthController::class, 'register']);
 Route::post('/user_login', [AuthController::class, 'login']);
-Route::middleware(['auth:sanctum'])->post('/user_logOut', [AuthController::class, 'logout']);
+Route::post('/user_logOut', [AuthController::class, 'logout'])->middleware(['auth:sanctum']);
 Route::get('/email/verify/{id}', [AuthController::class, 'verify'])->name('verification.verify')->middleware('throttle:10,1');
-Route::middleware(['auth:sanctum', 'ability:' . AbilityiesEnum::REFRESH_TOKEN->value])->post('/refresh-token', [AuthController::class, 'refresh']);
+Route::post('/refresh-token', [AuthController::class, 'refresh'])->middleware(['auth:sanctum', 'ability:' . AbilityiesEnum::REFRESH_TOKEN->value]);
 // Route::apiResource('/user',UsersController::class);
