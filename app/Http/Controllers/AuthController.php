@@ -7,11 +7,16 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterUserRequest;
 use App\Jobs\SendEmailJob;
+
+use App\Jobs\SendSmsJob;
 use App\Models\User;
 use App\Services\AbilityService;
+use App\Services\SmsService;
+use App\Services\VerificationService;
 use Illuminate\Http\Request;
 use App\Repositories\UserRepository;
 use App\Trait\ApiResponse;
+use Session;
 
 class AuthController extends Controller
 {
@@ -49,21 +54,32 @@ class AuthController extends Controller
     public function login(loginRequest $request)
     {
         $user = $this->userRepository->LoginUser($request->all());
-
         if ($user !== false) {
             if (!$user->two_step_verificaztion) {
                 $user->two_step_verificaztion = true;
                 $user->save();
             }
+            dispatch(new SendSmsJob($user));
+            VerificationService::set('user' , $user);
 
-            return $this->success('welcome to our apps. you are login', [
-                'access_token' => $user->createToken('access token for user', AbilityService::getAbiliteis($user->role), now()->addDays(config('auth.token.access_expire')))->plainTextToken,
-                'refresh_token' => $user->createToken('refresh token for user', [AbilityiesEnum::REFRESH_TOKEN->value], now()->addDays(config('auth.token.access_expire')))->plainTextToken,
-                'user' => $user
-            ]);
-        } else {
-            return $this->error('رمز عبور غلط است', 401);
         }
+if ($user == false){
+        return response()->json(['message' => __('http_error_messages.form_authentication')], 401);}
+    }
+
+    public function codeVerify(Request $request)
+    {
+        $user = VerificationService::get('user');
+
+        if ($request->code == VerificationService::get($user->mobile)){
+            return $this->success(__('http_success_messages.form_login_success'), [
+                'access_token'  => $user->createToken('access token for user', AbilityService::getAbiliteis($user->role), now()->addDays(config('auth.token.access_expire')))->plainTextToken,
+                'refresh_token' => $user->createToken('refresh token for user', [AbilityiesEnum::REFRESH_TOKEN->value], now()->addDays(config('auth.token.access_expire')))->plainTextToken,
+                'user'          => $user
+            ]);
+        }
+
+        return response()->json(['message' => __('http_error_messages.form_authentication')], 401);
     }
 
     public function logout(Request $request)

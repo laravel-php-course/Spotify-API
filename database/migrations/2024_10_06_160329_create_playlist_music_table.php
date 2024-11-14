@@ -12,10 +12,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('playlists', function (Blueprint $table) {
+        Schema::create('playlist_music', function (Blueprint $table) {
             $table->id();
-            $table->dropForeign('music_id')->constrained();
-            $table->dropForeign('playlists_id')->constrained();
+            $table->ForeignId('musics_id')->constrained();
+            $table->ForeignId('playlists_id')->constrained();
             $table->timestamps();
         });
     }

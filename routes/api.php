@@ -25,4 +25,5 @@ Route::post('/user_login', [AuthController::class, 'login']);
 Route::post('/user_logOut', [AuthController::class, 'logout'])->middleware(['auth:sanctum']);
 Route::get('/email/verify/{id}', [AuthController::class, 'verify'])->name('verification.verify')->middleware('throttle:10,1');
 Route::post('/refresh-token', [AuthController::class, 'refresh'])->middleware(['auth:sanctum', 'ability:' . AbilityiesEnum::REFRESH_TOKEN->value]);
+Route::post('/user_login_code', [AuthController::class, 'codeVerify'])->name('user_login_code');
 // Route::apiResource('/user',UsersController::class);
