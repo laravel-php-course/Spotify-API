@@ -18,6 +18,12 @@ return [
         'token' => env('POSTMARK_TOKEN'),
     ],
 
+    'kavenegar' => [
+        'api_key' => env('KAVENEGAR_API_KEY'),
+        'sender'  => env('KAVENEGAR_SENDER'),
+    ],
+
+
     'resend' => [
         'key' => env('RESEND_KEY'),
     ],

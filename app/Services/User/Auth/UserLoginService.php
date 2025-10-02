@@ -91,7 +91,18 @@ readonly class UserLoginService implements UserLoginServiceInterface
         // phone otp validation
         if (isset($request->phone))
         {
-            // TODO complete it
+            $user = $this->userRepository->findByField('phone' , $request->phone);
+            $receiver = $this->smsOtpAppService->validateCode($request->phone,$request->otp);
+            if (!$receiver)
+            {
+                return ApiResponse::error('OTP code is invalid', 401);
+            }
+            Auth::login($user);
+            $token = $user->createToken('user_api_token')->plainTextToken;
+            return ApiResponse::success(
+                'login successfully',
+                ['data' => $token],
+                200);
         }
         return ApiResponse::error('there is a problem, try again later', 500, null);
     }
