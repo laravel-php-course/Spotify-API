@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use App\Services\User\Auth\UserLoginService;
 use App\Services\User\Auth\UserLoginServiceInterface;
+use App\Services\User\Auth\UserRegisterService;
+use App\Services\User\Auth\UserRegisterServiceInterface;
 use Illuminate\Support\ServiceProvider;
 
 // Repositories
@@ -25,6 +27,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(AdminRepositoryInterface::class, AdminRepository::class);
         // Services
         $this->app->singleton(UserLoginServiceInterface::class, UserLoginService::class);
+        $this->app->singleton(UserRegisterServiceInterface::class , UserRegisterService::class);
     }
 
     /**
