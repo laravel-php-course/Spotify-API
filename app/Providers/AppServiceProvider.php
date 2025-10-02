@@ -6,6 +6,8 @@ use App\Services\User\Auth\UserEmailVerificationService;
 use App\Services\User\Auth\UserEmailVerificationServiceInterface;
 use App\Services\User\Auth\UserLoginService;
 use App\Services\User\Auth\UserLoginServiceInterface;
+use App\Services\User\Auth\UserLogoutService;
+use App\Services\User\Auth\UserLogoutServiceInterface;
 use App\Services\User\Auth\UserPhoneVerificationService;
 use App\Services\User\Auth\UserPhoneVerificationServiceInterface;
 use App\Services\User\Auth\UserRegisterService;
@@ -34,6 +36,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(UserRegisterServiceInterface::class , UserRegisterService::class);
         $this->app->singleton(UserEmailVerificationServiceInterface::class, UserEmailVerificationService::class);
         $this->app->singleton(UserPhoneVerificationServiceInterface::class, UserPhoneVerificationService::class);
+        $this->app->singleton(UserLogoutServiceInterface::class, UserLogoutService::class);
     }
 
     /**

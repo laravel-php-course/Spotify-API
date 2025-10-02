@@ -12,9 +12,11 @@ use App\Http\Requests\User\Verification\UserFormPhoneVerificationRequest;
 use App\Http\Requests\User\Verification\UserPhoneVerificationRequest;
 use App\Services\User\Auth\UserEmailVerificationServiceInterface;
 use App\Services\User\Auth\UserLoginServiceInterface;
+use App\Services\User\Auth\UserLogoutServiceInterface;
 use App\Services\User\Auth\UserPhoneVerificationServiceInterface;
 use App\Services\User\Auth\UserRegisterServiceInterface;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 
 class UserAuthController extends Controller
@@ -23,7 +25,8 @@ class UserAuthController extends Controller
         private readonly UserLoginServiceInterface $userLoginService,
         private readonly UserRegisterServiceInterface $userRegisterService,
         private readonly UserEmailVerificationServiceInterface $userEmailVerificationService,
-        private readonly UserPhoneVerificationServiceInterface $userPhoneVerificationService
+        private readonly UserPhoneVerificationServiceInterface $userPhoneVerificationService,
+        private readonly UserLogoutServiceInterface $userLogoutService
     )
     {}
 
@@ -59,5 +62,10 @@ class UserAuthController extends Controller
     public function verifyEmail(UserEmailVerificationRequest $request): JsonResponse
     {
         return $this->userEmailVerificationService->verifyEmail($request);
+    }
+
+    public function logout(Request $request): JsonResponse
+    {
+        return $this->userLogoutService->logout($request);
     }
 }

@@ -34,13 +34,11 @@ readonly class UserLoginService implements UserLoginServiceInterface
                 return ApiResponse::error('password or username is not current', 401);
             }
 
-            Auth::login($user);
             $token = $user->createToken("user_api_token")->plainTextToken;
 
             return ApiResponse::success('login successfully', [
                 'id'    => $user->id,
-                'data' => $token,
-                'password' => $user->password,
+                'token' => $token,
             ]);
 
         }
@@ -80,11 +78,10 @@ readonly class UserLoginService implements UserLoginServiceInterface
             if (!$receiver) {
                 return ApiResponse::error('OTP code is invalid', 401);
             }
-            Auth::login($user);
             $token = $user->createToken('user_api_token')->plainTextToken;
             return ApiResponse::success(
                 'login successfully',
-                ['data' => $token],
+                ['token' => $token],
                 200);
         }
 
@@ -97,11 +94,10 @@ readonly class UserLoginService implements UserLoginServiceInterface
             {
                 return ApiResponse::error('OTP code is invalid', 401);
             }
-            Auth::login($user);
             $token = $user->createToken('user_api_token')->plainTextToken;
             return ApiResponse::success(
                 'login successfully',
-                ['data' => $token],
+                ['token' => $token],
                 200);
         }
         return ApiResponse::error('there is a problem, try again later', 500, null);

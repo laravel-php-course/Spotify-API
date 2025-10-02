@@ -14,3 +14,4 @@ Route::post('/verify/send/email' , [UserAuthController::class, 'verifyEmailSend'
 Route::post('/verify/send/phone' , [UserAuthController::class, 'verifyPhoneSend'])->name('user.verify.send.phone');
 Route::post('/verify/email' , [UserAuthController::class, 'verifyEmail'])->name('user.verify.email');
 Route::post('/verify/phone' , [UserAuthController::class, 'verifyPhone'])->name('user.verify.phone');
+Route::post('/logout', [UserAuthController::class, 'logout'])->middleware('auth:sanctum')->name('user.logout');
