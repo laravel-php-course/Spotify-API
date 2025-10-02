@@ -3,7 +3,6 @@
 namespace App\Services\App;
 
 use App\Jobs\SendOtpJob;
-use Kavenegar\KavenegarApi;
 
 class SmsOtpAppService extends AbstractOtpAppService
 {

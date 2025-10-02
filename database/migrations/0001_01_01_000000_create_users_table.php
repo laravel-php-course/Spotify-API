@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('username')->unique();
             $table->enum('subscription_plan', SubscriptionTypeEnum::getArray())->default(SubscriptionTypeEnum::FREE);
             $table->string('phone')->nullable()->unique();
-            $table->timestamp('mobile_verified_at')->nullable();
+            $table->timestamp('phone_verified_at')->nullable();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');

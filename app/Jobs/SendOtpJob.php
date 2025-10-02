@@ -31,7 +31,7 @@ class SendOtpJob implements ShouldQueue
         if ($this->type === 'email')
         {
             Mail::raw($this->message, function ($mail) {
-                $mail->to($this->receiver)->subject('you OTP code');
+                $mail->to($this->receiver)->subject('your OTP code');
             });
         }
 

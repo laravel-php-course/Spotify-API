@@ -6,7 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\User\Login\UserLoginRequest;
 use App\Http\Requests\User\Login\UserValidateOtpRequest;
 use App\Http\Requests\User\Register\UserRegisterRequest;
+use App\Http\Requests\User\Verification\UserEmailVerificationRequest;
+use App\Http\Requests\User\Verification\UserFormEmailVerificationRequest;
+use App\Http\Requests\User\Verification\UserFormPhoneVerificationRequest;
+use App\Http\Requests\User\Verification\UserPhoneVerificationRequest;
+use App\Services\User\Auth\UserEmailVerificationServiceInterface;
 use App\Services\User\Auth\UserLoginServiceInterface;
+use App\Services\User\Auth\UserPhoneVerificationServiceInterface;
 use App\Services\User\Auth\UserRegisterServiceInterface;
 use Illuminate\Http\JsonResponse;
 
@@ -15,7 +21,9 @@ class UserAuthController extends Controller
 {
     public function __construct(
         private readonly UserLoginServiceInterface $userLoginService,
-        private readonly UserRegisterServiceInterface $userRegisterService
+        private readonly UserRegisterServiceInterface $userRegisterService,
+        private readonly UserEmailVerificationServiceInterface $userEmailVerificationService,
+        private readonly UserPhoneVerificationServiceInterface $userPhoneVerificationService
     )
     {}
 
@@ -32,5 +40,24 @@ class UserAuthController extends Controller
     public function register(UserRegisterRequest $request): JsonResponse
     {
         return $this->userRegisterService->register($request);
+    }
+
+    public function verifyEmailSend(UserFormEmailVerificationRequest $request): JsonResponse
+    {
+        return $this->userEmailVerificationService->verifyEmailSend($request);
+    }
+
+    public function verifyPhoneSend(UserFormPhoneVerificationRequest $request): JsonResponse
+    {
+        return $this->userPhoneVerificationService->verifyPhoneSend($request);
+    }
+
+    public function verifyPhone(UserPhoneVerificationRequest $request): JsonResponse
+    {
+        return $this->userPhoneVerificationService->verifyPhone($request);
+    }
+    public function verifyEmail(UserEmailVerificationRequest $request): JsonResponse
+    {
+        return $this->userEmailVerificationService->verifyEmail($request);
     }
 }

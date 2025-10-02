@@ -11,7 +11,7 @@ class UserEmailVerificationRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,8 @@ class UserEmailVerificationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'email' => ['required','string', 'email'], // send it in hidden input or url
+            'otp' => ['required','digits:' . config('app.otp_length_integer')],
         ];
     }
 }
