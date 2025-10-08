@@ -12,18 +12,18 @@ class ApiResponse
             'success' => true,
             'message'=> $message,
             'data' => $data,
-            'errors'=>[],
+            'errors'=> [],
             'code' => $code
         ], $code);
     }
 
-    public static function error(string $message, int $code, array|null $data = null): JsonResponse
+    public static function error(string $message, int $code, array|null $error = null): JsonResponse
     {
         return response()->json([
             'success' => false,
             'message'=> $message,
-            'data' => $data,
-            'errors' => [],
+            'data' => [],
+            'errors' => $error,
             'code' => $code
         ], $code);
     }

@@ -31,7 +31,7 @@ readonly class UserEmailVerificationService implements UserEmailVerificationServ
         {
            return ApiResponse::error('there is a problem, try again later', 500);
         }
-        return ApiResponse::success('OTP successfully sent',null,201);
+        return ApiResponse::success('OTP successfully sent',null,200);
     }
 
     public function verifyEmail(UserEmailVerificationRequest $request): JsonResponse

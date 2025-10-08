@@ -31,7 +31,7 @@ readonly class UserLoginService implements UserLoginServiceInterface
             }
 
             if (!Hash::check($request->password, $user->password)) {
-                return ApiResponse::error('password or username is not current', 401);
+                return ApiResponse::error('password or username is not correct', 401);
             }
 
             $token = $user->createToken("user_api_token")->plainTextToken;
