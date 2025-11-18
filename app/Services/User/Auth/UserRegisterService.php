@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Log;
 
 readonly class UserRegisterService implements UserRegisterServiceInterface
 {
+    use ApiResponse;
     public function __construct(
         private UserRepositoryInterface $userRepository
     )
@@ -33,7 +34,7 @@ readonly class UserRegisterService implements UserRegisterServiceInterface
             ]);
             $token = $user->createToken('auth_token')->plainTextToken;
 
-            return ApiResponse::success(
+            return self::success(
                 'user successfully registered',
                 [
                     'user'  => $user,
@@ -46,7 +47,7 @@ readonly class UserRegisterService implements UserRegisterServiceInterface
             Log::error('User registration failed', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
-            ]);            return ApiResponse::error(
+            ]);            return self::error(
                 'Registration failed. Please try again later.',
                 500,
                 ['exception' => $e->getMessage()]

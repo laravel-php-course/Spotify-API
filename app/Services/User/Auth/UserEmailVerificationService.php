@@ -11,7 +11,7 @@ use Illuminate\Http\JsonResponse;
 
 readonly class UserEmailVerificationService implements UserEmailVerificationServiceInterface
 {
-
+    use ApiResponse;
     public function __construct(
         private EmailOtpAppService $emailOtpAppService,
         private UserRepositoryInterface $userRepository
@@ -24,14 +24,14 @@ readonly class UserEmailVerificationService implements UserEmailVerificationServ
         $user = $this->userRepository->findByField('email', $request->email);
         if (!$user)
         {
-            return ApiResponse::error('email not found',404);
+            return self::error('email not found',404);
         }
         $sendOtp = $this->emailOtpAppService->send($request->email,'OTP code:');
         if (!$sendOtp)
         {
-           return ApiResponse::error('there is a problem, try again later', 500);
+           return self::error('there is a problem, try again later', 500);
         }
-        return ApiResponse::success('OTP successfully sent',null,200);
+        return self::success('OTP successfully sent',null,200);
     }
 
     public function verifyEmail(UserEmailVerificationRequest $request): JsonResponse
@@ -40,11 +40,11 @@ readonly class UserEmailVerificationService implements UserEmailVerificationServ
         $check = $this->emailOtpAppService->validateCode($request->email, $request->otp);
         if (!$check)
         {
-            return ApiResponse::error('Invalid OTP',401);
+            return self::error('Invalid OTP',401);
         }
         $this->userRepository->update($user->id,[
             'email_verified_at' => now()
         ]);
-        return ApiResponse::success('email verified successfully',null,200);
+        return self::success('email verified successfully',null,200);
     }
 }

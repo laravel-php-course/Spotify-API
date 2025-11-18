@@ -11,7 +11,7 @@ use Illuminate\Http\JsonResponse;
 
 readonly class UserPhoneVerificationService implements UserPhoneVerificationServiceInterface
 {
-
+    use ApiResponse;
     public function __construct(
         private SmsOtpAppService $smsOtpAppService,
         private UserRepositoryInterface $userRepository
@@ -24,14 +24,14 @@ readonly class UserPhoneVerificationService implements UserPhoneVerificationServ
         $user = $this->userRepository->findByField('phone', $request->phone);
         if (!$user)
         {
-            return ApiResponse::error('phone not found', 404);
+            return self::error('phone not found', 404);
         }
         $sendOtp = $this->smsOtpAppService->send($request->phone, 'OTP code:');
         if (!$sendOtp)
         {
-            return ApiResponse::error('there is a problem, try again later', 500);
+            return self::error('there is a problem, try again later', 500);
         }
-        return ApiResponse::success('OTP successfully sent',null,201);
+        return self::success('OTP successfully sent',null,201);
     }
 
     public function verifyPhone(UserPhoneVerificationRequest $request): JsonResponse
@@ -40,11 +40,11 @@ readonly class UserPhoneVerificationService implements UserPhoneVerificationServ
         $check = $this->smsOtpAppService->validateCode($request->phone,$request->otp);
         if (!$check)
         {
-            return ApiResponse::error('Invalid OTP',401);
+            return self::error('Invalid OTP',401);
         }
         $this->userRepository->update($user->id,[
             'phone_verified_at' => now()
         ]);
-        return ApiResponse::success('phone number verified successfully',null,200);
+        return self::success('phone number verified successfully',null,200);
     }
 }

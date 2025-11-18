@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Services\Admin\AdminAuthService;
+use App\Services\Admin\AdminAuthServiceInterface;
 use App\Services\User\Auth\UserEmailVerificationService;
 use App\Services\User\Auth\UserEmailVerificationServiceInterface;
 use App\Services\User\Auth\UserLoginService;
@@ -37,6 +39,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(UserEmailVerificationServiceInterface::class, UserEmailVerificationService::class);
         $this->app->singleton(UserPhoneVerificationServiceInterface::class, UserPhoneVerificationService::class);
         $this->app->singleton(UserLogoutServiceInterface::class, UserLogoutService::class);
+        $this->app->singleton(AdminAuthServiceInterface::class, AdminAuthService::class);
     }
 
     /**

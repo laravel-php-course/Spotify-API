@@ -9,13 +9,13 @@ use Illuminate\Support\Facades\Auth;
 
 class UserLogoutService implements UserLogoutServiceInterface
 {
-
+    use ApiResponse;
     public function logout(Request $request): JsonResponse
     {
         if ($request->user() && $request->user()->currentAccessToken())
         {
             $request->user()->currentAccessToken()->delete();
         }
-        return ApiResponse::success('user logout successfully', null, 200);
+        return self::success('user logout successfully', null, 200);
     }
 }
