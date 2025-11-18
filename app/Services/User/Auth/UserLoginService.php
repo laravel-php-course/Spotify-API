@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Hash;
 
 readonly class UserLoginService implements UserLoginServiceInterface
 {
+    use ApiResponse;
     public function __construct(
         private EmailOtpAppService      $emailOtpAppService,
         private SmsOtpAppService        $smsOtpAppService,
@@ -27,16 +28,16 @@ readonly class UserLoginService implements UserLoginServiceInterface
         {
             $user = $this->userRepository->findByField('username', $request->username);
             if (!$user) {
-                return ApiResponse::error('username not found', 404);
+                return self::error('username not found', 404);
             }
 
             if (!Hash::check($request->password, $user->password)) {
-                return ApiResponse::error('password or username is not correct', 401);
+                return self::error('password or username is not correct', 401);
             }
 
             $token = $user->createToken("user_api_token")->plainTextToken;
 
-            return ApiResponse::success('login successfully', [
+            return self::success('login successfully', [
                 'id'    => $user->id,
                 'token' => $token,
             ]);
@@ -49,10 +50,10 @@ readonly class UserLoginService implements UserLoginServiceInterface
             $user = $this->userRepository->findByField('phone' , $request->phone);
             if (!$user)
             {
-                return ApiResponse::error('phone number not found', 404);
+                return self::error('phone number not found', 404);
             }
             $this->smsOtpAppService->send($request->phone , 'OTP code');
-            return ApiResponse::success('OTP code successfully sent' , null,200);
+            return self::success('OTP code successfully sent' , null,200);
         }
 
         // login by email
@@ -61,12 +62,12 @@ readonly class UserLoginService implements UserLoginServiceInterface
             $user = $this->userRepository->findByField('email' , $request->email);
             if (!$user)
             {
-                return ApiResponse::error('email not found' , 404);
+                return self::error('email not found' , 404);
             }
             $this->emailOtpAppService->send($request->email, 'OTP code');
-            return ApiResponse::success('OTP code successfully sent' , null,200);
+            return self::success('OTP code successfully sent' , null,200);
         }
-        return ApiResponse::error('there is a problem, try again later', 500, null);
+        return self::error('there is a problem, try again later', 500, null);
     }
 
     public function validate($request): JsonResponse
@@ -76,10 +77,10 @@ readonly class UserLoginService implements UserLoginServiceInterface
             $user = $this->userRepository->findByField('email', $request->email);
             $receiver = $this->emailOtpAppService->validateCode($request->email, $request->otp);
             if (!$receiver) {
-                return ApiResponse::error('OTP code is invalid', 401);
+                return self::error('OTP code is invalid', 401);
             }
             $token = $user->createToken('user_api_token')->plainTextToken;
-            return ApiResponse::success(
+            return self::success(
                 'login successfully',
                 ['token' => $token],
                 200);
@@ -92,15 +93,15 @@ readonly class UserLoginService implements UserLoginServiceInterface
             $receiver = $this->smsOtpAppService->validateCode($request->phone,$request->otp);
             if (!$receiver)
             {
-                return ApiResponse::error('OTP code is invalid', 401);
+                return self::error('OTP code is invalid', 401);
             }
             $token = $user->createToken('user_api_token')->plainTextToken;
-            return ApiResponse::success(
+            return self::success(
                 'login successfully',
                 ['token' => $token],
                 200);
         }
-        return ApiResponse::error('there is a problem, try again later', 500, null);
+        return self::error('there is a problem, try again later', 500, null);
     }
 
 

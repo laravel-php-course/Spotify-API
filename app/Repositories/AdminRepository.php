@@ -23,4 +23,9 @@ class AdminRepository implements AdminRepositoryInterface
         $model->update($data);
         return $model;
     }
+
+    public function findByField(string $field, mixed $value): ?Admin
+    {
+        return Admin::where($field , $value)->first();
+    }
 }
